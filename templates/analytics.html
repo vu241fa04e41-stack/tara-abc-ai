@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Analytics · AI Classroom{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">REPORTING</p>
+    <h1>Classroom Analytics</h1>
+    <p class="muted">Live aggregates from the latest AI worker detections.</p>
+  </div>
+</section>
+
+<section class="cards">
+  <article class="card"><span>Samples</span><strong id="samples">0</strong></article>
+  <article class="card"><span>Average Students</span><strong id="avgStudents">0</strong></article>
+  <article class="card"><span>Average Attention</span><strong id="avgAttention">0%</strong></article>
+  <article class="card"><span>Phone Events</span><strong id="phoneEvents">0</strong></article>
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Latest Detection Data</h2></div>
+  <div id="analyticsList" class="list"></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadAnalytics() {
+  const [summary, detections] = await Promise.all([
+    fetch('/api/summary').then(r => r.json()),
+    fetch('/api/detections?limit=100').then(r => r.json())
+  ]);
+  const rows = detections || [];
+  document.getElementById('samples').textContent = rows.length;
+  document.getElementById('avgStudents').textContent =
+    rows.length ? (rows.reduce((a,r)=>a+Number(r.student_count||0),0)/rows.length).toFixed(1) : '0';
+  document.getElementById('avgAttention').textContent =
+    rows.length ? (rows.reduce((a,r)=>a+Number(r.attention_score||0),0)/rows.length).toFixed(1)+'%' : '0%';
+  document.getElementById('phoneEvents').textContent =
+    rows.reduce((a,r)=>a+Number(r.phone_users||0),0);
+  document.getElementById('analyticsList').innerHTML = rows.slice(0,20).map(r =>
+    `<div class="list-row"><span>${r.camera_name || 'Camera '+r.camera_id}</span><b>${r.student_count} students</b><span>${Number(r.attention_score||0).toFixed(1)}% attention</span></div>`
+  ).join('') || '<div class="empty">No detection data yet. Start the AI worker.</div>';
+}
+loadAnalytics();
+setInterval(loadAnalytics, 10000);
+</script>
+{% endblock %}

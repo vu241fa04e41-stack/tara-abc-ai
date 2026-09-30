@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · AI Classroom{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">REAL-TIME CLASSROOM INTELLIGENCE</p>
+    <h1>AI Classroom Dashboard</h1>
+    <p class="muted">Monitor classroom occupancy, AI detections, attention and camera health.</p>
+  </div>
+  <div class="status"><span id="statusDot"></span><span id="systemStatus">Checking...</span></div>
+</section>
+
+<section class="cards">
+  <article class="card"><span>Students Now</span><strong id="studentsNow">0</strong></article>
+  <article class="card"><span>Online Cameras</span><strong id="onlineCameras">0</strong></article>
+  <article class="card"><span>Total Cameras</span><strong id="totalCameras">0</strong></article>
+  <article class="card"><span>Last Detection</span><strong id="lastDetection">—</strong></article>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Camera Nodes</h2>
+    <button onclick="loadDashboard()">Refresh</button>
+  </div>
+  <div id="cameras" class="camera-grid">
+    <div class="empty">Loading camera data...</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head"><h2>Recent AI Detections</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Time</th><th>Camera</th><th>Students</th><th>Attention</th><th>Mode</th></tr></thead>
+      <tbody id="detections"><tr><td colspan="5">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
